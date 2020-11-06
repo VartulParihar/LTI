@@ -1,0 +1,112 @@
+ASSIGNMENT-3
+---------------------------------------------
+
+--Q1
+
+alter table Customers
+add constraint pk_Cid primary key (Customerid)
+
+alter table Orders
+add constraint pk_Oid primary key (Orderid)
+
+alter table Orders
+add constraint fk_Cid foreign key(customerId) references Customers(Customerid)
+
+truncate table Orders
+
+--Q2
+
+alter table Orders
+add constraint CHK_Quantity check( Quantity between 1 and 30 )
+
+--Q3
+
+sp_helpconstraint Orders
+
+--Q4
+
+alter table Customers drop constraint pk_Cid
+--The constraint 'pk_Cid' can not be deleted because it is being referenced by table 'Orders', foreign key constraint 'fk_Cid'
+
+--Q5
+
+alter table Orders drop constraint CHK_Quantity
+
+--Q6
+drop procedure insert_into_department
+create procedure insert_into_department(@dept varchar(3),@dname varchar(20),@location varchar(20))
+as
+begin
+	if exists(select * from Department where Dept = @dept)
+		print 'record already exists'
+	else
+		insert into Department values(@dept,@dname,@location)
+end
+
+exec insert_into_department 'd4' ,'Sales','Chicago'
+
+                      -----------------------
+
+drop procedure insert_into_employee
+create procedure insert_into_employee(@emp int,@fname varchar(15),@lname varchar(15),@dept varchar(3))
+as
+begin
+	if exists(select * from Employee where emp = @emp)
+		print 'record already exists'
+	else
+		insert into Employee values(@emp,@fname,@lname,@dept)
+end
+
+exec insert_into_employee 9031,'Hermioni','Mudblood','d4' 
+
+--Q8 
+
+create table Students(SID int primary key,Sname varchar(25) not null, Dob date)
+
+create procedure Add_student(@name varchar(25),@dob date)
+as
+begin
+	declare @id int
+	if exists(select * from Students)
+		set @id = (select MAX(Sid) from Students) + 1
+	else
+		set @id = 1
+	
+	insert into Students values(@id,@name,@dob)
+end
+
+
+select * from Students
+exec Add_student 'Vartul Parihar' , '1997/05/27'
+exec Add_student 'Shivangi Solanki' , '1997/10/08'
+
+
+--Q9
+
+create procedure getage(@dob date)
+as
+begin 
+	declare @age int
+	set @age = datediff(yy,@dob,getdate())
+	print 'Age is : ' + cast(@age as varchar)
+end
+
+exec getage '1997/05/12'
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
